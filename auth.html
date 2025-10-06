@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In • Versewell Digital Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./auth.css?v=1.0.2" />
+</head>
+<body>
+  <div class="auth-header">
+    <a href="./index.html" class="back-home">
+      <span><i class="fas fa-arrow-left"></i> Back to Home</span>
+    </a>
+  </div>
+  
+  <main class="auth" aria-label="Authentication">
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <div class="tabs" role="tablist" aria-label="Auth forms">
+        <button id="tab-login" role="tab" aria-selected="true" aria-controls="panel-login" class="tab active"><span>Login</span></button>
+        <button id="tab-signup" role="tab" aria-selected="false" aria-controls="panel-signup" class="tab"><span>Sign Up</span></button>
+      </div>
+
+      <section id="panel-login" role="tabpanel" aria-labelledby="tab-login" class="panel active">
+        <h1 id="authTitle" class="title">Login</h1>
+        <form id="loginForm" class="form" autocomplete="on" novalidate>
+          <label class="field">
+            <span class="label">Email</span>
+            <input type="email" name="email" placeholder="Enter your email" required />
+            <small class="error" aria-live="polite"></small>
+          </label>
+          <label class="field">
+            <span class="label">Password</span>
+            <input type="password" name="password" placeholder="Enter your password" required minlength="8" />
+            <small class="error" aria-live="polite"></small>
+          </label>
+          <div class="row space-between">
+            <label class="checkbox">
+              <input type="checkbox" name="remember" />
+              <span>Remember me</span>
+            </label>
+            <a href="#" class="link">Forgot password?</a>
+          </div>
+          <button class="btn primary" type="submit"><span>Log In</span></button>
+          <div class="auth-links">
+            <p class="muted">Don't have an account? <button type="button" class="link-as-btn" data-switch="signup">Register</button></p>
+            <p class="muted">Are you an admin? <a href="./admin-login.html" class="link">Admin Portal →</a></p>
+          </div>
+        </form>
+      </section>
+
+      <section id="panel-signup" role="tabpanel" aria-labelledby="tab-signup" class="panel" hidden>
+        <h1 class="title">Create Account</h1>
+        <form id="signupForm" class="form" autocomplete="on" novalidate>
+          <label class="field">
+            <span class="label">Full Name</span>
+            <input type="text" name="name" placeholder="Enter your name" required minlength="2" />
+            <small class="error" aria-live="polite"></small>
+          </label>
+          <label class="field">
+            <span class="label">Email</span>
+            <input type="email" name="email" placeholder="Enter your email" required />
+            <small class="error" aria-live="polite"></small>
+          </label>
+          <label class="field">
+            <span class="label">Password</span>
+            <input type="password" name="password" placeholder="Create a password" required minlength="8" />
+            <small class="error" aria-live="polite"></small>
+          </label>
+          <button class="btn primary" type="submit"><span>Sign Up</span></button>
+          <p class="muted">Already have an account? <button type="button" class="link-as-btn" data-switch="login">Log In</button></p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="./api.js?v=1.0.1" defer></script>
+  <script src="./auth.js?v=1.0.1" defer></script>
+</body>
+</html>

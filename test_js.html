@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin JS</title>
+</head>
+<body>
+    <h1>Test Admin JS</h1>
+    <div id="log"></div>
+    
+    <script>
+        const log = document.getElementById('log');
+        log.innerHTML += '<p>Basic JS working</p>';
+        
+        // Test if admin.js loads without errors
+        fetch('./admin.js')
+            .then(response => response.text())
+            .then(text => {
+                log.innerHTML += '<p>admin.js loaded successfully (' + text.length + ' chars)</p>';
+                
+                // Try to execute a simple part of the admin code
+                try {
+                    eval('console.log("Admin JS syntax OK");');
+                    log.innerHTML += '<p>Admin JS syntax appears OK</p>';
+                } catch (e) {
+                    log.innerHTML += '<p>Admin JS syntax error: ' + e.message + '</p>';
+                }
+            })
+            .catch(error => {
+                log.innerHTML += '<p>Error loading admin.js: ' + error.message + '</p>';
+            });
+    </script>
+</body>
+</html>

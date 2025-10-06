@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffe6e6; border-left: 4px solid #ff0000; }
+        .success { background: #e6ffe6; border-left: 4px solid #00aa00; }
+        .info { background: #e6f3ff; border-left: 4px solid #0066cc; }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel Debug</h1>
+    <div id="output"></div>
+    
+    <script src="./admin.js"></script>
+    <script>
+        const output = document.getElementById('output');
+        
+        function addDebug(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = 'debug ' + type;
+            div.innerHTML = '<strong>' + new Date().toLocaleTimeString() + ':</strong> ' + message;
+            output.appendChild(div);
+            console.log('[' + type.toUpperCase() + ']', message);
+        }
+        
+        // Override console methods to capture admin.js logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        console.log = function(...args) {
+            addDebug(args.join(' '), 'info');
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            addDebug(args.join(' '), 'error');
+            originalError.apply(console, args);
+        };
+        
+        addDebug('Starting admin panel debug...', 'info');
+        
+        // Check if AdminPanel class exists
+        if (typeof AdminPanel !== 'undefined') {
+            addDebug('✅ AdminPanel class found', 'success');
+        } else {
+            addDebug('❌ AdminPanel class not found', 'error');
+        }
+        
+        // Check if adminPanel instance exists
+        if (typeof window.adminPanel !== 'undefined') {
+            addDebug('✅ adminPanel instance found', 'success');
+        } else {
+            addDebug('❌ adminPanel instance not found', 'error');
+        }
+        
+        // Wait for DOM to be ready and check again
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                addDebug('DOM loaded, checking adminPanel again...', 'info');
+                
+                if (typeof window.adminPanel !== 'undefined') {
+                    addDebug('✅ adminPanel instance found after DOM load', 'success');
+                    
+                    // Check adminPanel properties
+                    if (window.adminPanel.users) {
+                        addDebug('adminPanel.users: ' + JSON.stringify(window.adminPanel.users), 'info');
+                    }
+                    if (window.adminPanel.books) {
+                        addDebug('adminPanel.books: ' + JSON.stringify(window.adminPanel.books), 'info');
+                    }
+                    if (window.adminPanel.stats) {
+                        addDebug('adminPanel.stats: ' + JSON.stringify(window.adminPanel.stats), 'info');
+                    }
+                } else {
+                    addDebug('❌ adminPanel instance still not found after DOM load', 'error');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Debug Test</title>
+</head>
+<body>
+    <h1>Session Debug Test</h1>
+    <div id="log"></div>
+    <button onclick="testSessions()">Test Sessions</button>
+    
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message) {
+            log.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            console.log(message);
+        }
+        
+        async function testSessions() {
+            addLog('Starting session test...');
+            
+            try {
+                // Step 1: Set session
+                addLog('Step 1: Setting session...');
+                const setResponse = await fetch('./test_session.php?action=set_session', {
+                    credentials: 'include'
+                });
+                const setData = await setResponse.json();
+                addLog('Set session response: ' + JSON.stringify(setData));
+                
+                // Step 2: Check session
+                addLog('Step 2: Checking session...');
+                const checkResponse = await fetch('./test_session.php?action=check_session', {
+                    credentials: 'include'
+                });
+                const checkData = await checkResponse.json();
+                addLog('Check session response: ' + JSON.stringify(checkData));
+                
+                // Step 3: Test actual admin login
+                addLog('Step 3: Testing actual admin login...');
+                const loginResponse = await fetch('./admin_backend.php?action=login', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@admin.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                const loginData = await loginResponse.json();
+                addLog('Login response: ' + JSON.stringify(loginData));
+                
+                // Step 4: Test whoami
+                addLog('Step 4: Testing whoami...');
+                const whoamiResponse = await fetch('./admin_backend.php?action=whoami', {
+                    credentials: 'include'
+                });
+                const whoamiData = await whoamiResponse.json();
+                addLog('Whoami response: ' + JSON.stringify(whoamiData));
+                
+                // Step 5: Test users endpoint
+                addLog('Step 5: Testing users endpoint...');
+                const usersResponse = await fetch('./admin_backend.php?action=users', {
+                    credentials: 'include'
+                });
+                
+                if (usersResponse.ok) {
+                    const usersData = await usersResponse.json();
+                    addLog('Users response: ' + JSON.stringify(usersData.slice(0, 2))); // Show first 2 users
+                    addLog('Users count: ' + usersData.length);
+                } else {
+                    const errorText = await usersResponse.text();
+                    addLog('Users failed: ' + usersResponse.status + ' - ' + errorText);
+                }
+                
+            } catch (error) {
+                addLog('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

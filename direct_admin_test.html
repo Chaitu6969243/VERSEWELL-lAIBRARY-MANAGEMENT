@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Admin Panel Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .stats { display: flex; gap: 20px; margin: 20px 0; }
+        .stat-card { border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+        .stat-number { font-size: 24px; font-weight: bold; color: #333; }
+        .stat-label { color: #666; font-size: 14px; }
+        #log { background: #f5f5f5; padding: 10px; border-radius: 5px; margin-top: 20px; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>Direct Admin Panel Test</h1>
+    
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="userCount">-</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="bookCount">-</div>
+            <div class="stat-label">Total Books</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="borrowingCount">-</div>
+            <div class="stat-label">Total Borrowings</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="activeCount">-</div>
+            <div class="stat-label">Active Borrowings</div>
+        </div>
+    </div>
+    
+    <div id="log"></div>
+    
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message) {
+            log.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        async function loadAdminData() {
+            try {
+                addLog('Starting admin data load...');
+                
+                // Step 1: Login
+                addLog('Logging in as admin...');
+                const loginResponse = await fetch('./admin_backend.php?action=login', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@admin.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                const loginData = await loginResponse.json();
+                if (loginData.message) {
+                    addLog('✅ Login successful: ' + loginData.message);
+                } else {
+                    throw new Error('Login failed: ' + (loginData.error || 'Unknown error'));
+                }
+                
+                // Step 2: Load Users
+                addLog('Loading users...');
+                const usersResponse = await fetch('./admin_backend.php?action=users', {
+                    credentials: 'include'
+                });
+                
+                if (usersResponse.ok) {
+                    const users = await usersResponse.json();
+                    document.getElementById('userCount').textContent = users.length;
+                    addLog('✅ Users loaded: ' + users.length);
+                } else {
+                    addLog('❌ Users failed: ' + usersResponse.status);
+                }
+                
+                // Step 3: Load Books
+                addLog('Loading books...');
+                const booksResponse = await fetch('./admin_backend.php?action=books', {
+                    credentials: 'include'
+                });
+                
+                if (booksResponse.ok) {
+                    const books = await booksResponse.json();
+                    document.getElementById('bookCount').textContent = books.length;
+                    addLog('✅ Books loaded: ' + books.length);
+                } else {
+                    addLog('❌ Books failed: ' + booksResponse.status);
+                }
+                
+                // Step 4: Load Borrowings
+                addLog('Loading borrowings...');
+                const borrowingsResponse = await fetch('./admin_backend.php?action=borrowings', {
+                    credentials: 'include'
+                });
+                
+                if (borrowingsResponse.ok) {
+                    const borrowings = await borrowingsResponse.json();
+                    document.getElementById('borrowingCount').textContent = borrowings.length;
+                    
+                    // Count active borrowings
+                    const active = borrowings.filter(b => b.status === 'borrowed').length;
+                    document.getElementById('activeCount').textContent = active;
+                    
+                    addLog('✅ Borrowings loaded: ' + borrowings.length + ' (Active: ' + active + ')');
+                } else {
+                    addLog('❌ Borrowings failed: ' + borrowingsResponse.status);
+                }
+                
+                addLog('🎉 Admin data load complete!');
+                
+            } catch (error) {
+                addLog('❌ Error: ' + error.message);
+            }
+        }
+        
+        // Auto-load on page load
+        loadAdminData();
+    </script>
+</body>
+</html>

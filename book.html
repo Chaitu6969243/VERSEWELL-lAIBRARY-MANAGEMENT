@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Books • Versewell</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./styles.css?v=1.0.1" />
+  <link rel="stylesheet" href="./book.css?v=1.0.1" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="./index.html" class="brand" aria-label="Versewell Digital Library home">
+        <span class="logo" aria-hidden="true"><i class="fas fa-book"></i></span>
+        <span class="brand-text">Versewell</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="./index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="./book.html"><i class="fas fa-book-open"></i> Books</a>
+        <a href="./profile.html" id="profileNav"><i class="fas fa-user"></i> Profile</a>
+        <a href="./notifications.html" id="notificationsNav"><i class="fas fa-bell"></i> Notifications</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="./auth.html" id="authAction" class="btn btn-accent signin-btn">Sign In</a>
+        <button id="signOutAction" class="btn btn-secondary signout-btn" style="display: none;">Sign Out</button>
+        <button id="menuToggle" class="icon-btn" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobileMenu" class="mobile-menu" hidden>
+      <nav class="mobile-nav" aria-label="Mobile">
+        <a href="./index.html" data-close="menu"><i class="fas fa-home"></i> Home</a>
+        <a href="./book.html" data-close="menu"><i class="fas fa-book-open"></i> Books</a>
+        <a href="./profile.html" id="profileMobile" data-close="menu"><i class="fas fa-user"></i> Profile</a>
+        <a href="./notifications.html" id="notificationsMobile" data-close="menu"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="./auth.html" id="authMobile" class="btn btn-accent">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="book-main">
+    <section class="book-hero">
+      <div class="container">
+        <h1 class="section-title">Discover Books</h1>
+         <form id="searchForm" class="search-form" role="search" aria-label="Book search">
+          <input id="titleQuery" type="search" placeholder="Search books by title, author, or keyword..." />
+          <button class="btn btn-accent" type="submit">Search</button>
+        </form>
+        <p id="helper" class="helper" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="results">
+      <div class="container">
+        <div id="booksGrid" class="books-grid"></div>
+        <div id="loadingIndicator" class="loading-indicator" hidden>
+          <p>Loading more books...</p>
+        </div>
+        <div id="status" class="status" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="borrowModal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Borrow Book</h3>
+        <button class="modal-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="book-info">
+          <img id="modalBookCover" src="" alt="Book cover" class="modal-book-cover">
+          <div class="book-details">
+            <h4 id="modalBookTitle"></h4>
+            <p id="modalBookAuthor"></p>
+            <p id="modalBookPages"></p>
+          </div>
+        </div>
+        <div class="borrow-form">
+          <label class="field">
+            <span class="label">Borrow Duration</span>
+            <select id="borrowDuration" required>
+              <option value="7">1 Week</option>
+              <option value="14" selected>2 Weeks</option>
+              <option value="21">3 Weeks</option>
+              <option value="30">1 Month</option>
+            </select>
+          </label>
+          <div class="borrow-info">
+            <p><strong>Due Date:</strong> <span id="dueDate"></span></p>
+            <p class="fine-info">Late return fine: ₹100 per day</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="cancelBorrow">Cancel</button>
+        <button class="btn btn-accent" id="confirmBorrow">Borrow Book</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js?v=1.0.1" defer></script>
+  <script src="./api.js?v=1.0.1" defer></script>
+  <script src="./book.js?v=1.0.1" defer></script>
+  <script src="book.js"></script>
+</body>
+</html>

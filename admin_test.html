@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .step { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel System Test</h1>
+    
+    <div class="step" id="step-1">
+        <h3>Step 1: Test Session Configuration</h3>
+        <button onclick="testSession()">Test Session</button>
+        <div id="session-result"></div>
+    </div>
+
+    <div class="step" id="step-2">
+        <h3>Step 2: Admin Login</h3>
+        <form id="login-form">
+            <input type="email" id="email" placeholder="Admin Email" value="admin@versewell.com" required>
+            <input type="password" id="password" placeholder="Password" value="admin123" required>
+            <button type="submit">Login</button>
+        </form>
+        <div id="login-result"></div>
+    </div>
+
+    <div class="step" id="step-3">
+        <h3>Step 3: Check Admin Session</h3>
+        <button onclick="checkAdminAuth()">Check Auth</button>
+        <div id="auth-result"></div>
+    </div>
+
+    <div class="step" id="step-4">
+        <h3>Step 4: Load Admin Data</h3>
+        <button onclick="loadUsers()">Load Users</button>
+        <button onclick="loadBooks()">Load Books</button>
+        <button onclick="loadBorrowings()">Load Borrowings</button>
+        <div id="data-result"></div>
+    </div>
+
+    <div class="step" id="step-5">
+        <h3>Step 5: Test Admin Panel</h3>
+        <button onclick="openAdminPanel()">Open Admin Panel</button>
+        <div id="panel-result"></div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8000';
+
+        async function makeRequest(url, options = {}) {
+            const defaultOptions = {
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            const finalOptions = { ...defaultOptions, ...options };
+            if (finalOptions.headers && options.headers) {
+                finalOptions.headers = { ...defaultOptions.headers, ...options.headers };
+            }
+
+            try {
+                const response = await fetch(url, finalOptions);
+                const data = await response.json();
+                return {
+                    ok: response.ok,
+                    status: response.status,
+                    data: data
+                };
+            } catch (error) {
+                return {
+                    ok: false,
+                    status: 0,
+                    error: error.message
+                };
+            }
+        }
+
+        async function testSession() {
+            const result = await makeRequest(`${BASE_URL}/session_debug.php`);
+            const resultDiv = document.getElementById('session-result');
+            
+            if (result.ok) {
+                resultDiv.innerHTML = `<pre class="success">${JSON.stringify(result.data, null, 2)}</pre>`;
+            } else {
+                resultDiv.innerHTML = `<pre class="error">Error: ${result.error || result.data?.error || 'Unknown error'}</pre>`;
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const result = await makeRequest(`${BASE_URL}/admin_backend.php?action=login`, {
+                method: 'POST',
+                body: JSON.stringify({ email, password })
+            });
+
+            const resultDiv = document.getElementById('login-result');
+            
+            if (result.ok) {
+                resultDiv.innerHTML = `<pre class="success">Login successful!
+${JSON.stringify(result.data, null, 2)}</pre>`;
+            } else {
+                resultDiv.innerHTML = `<pre class="error">Login failed: ${result.data?.error || result.error}</pre>`;
+            }
+        });
+
+        async function checkAdminAuth() {
+            const result = await makeRequest(`${BASE_URL}/admin_backend.php?action=whoami`);
+            const resultDiv = document.getElementById('auth-result');
+            
+            if (result.ok) {
+                resultDiv.innerHTML = `<pre class="success">Auth check successful!
+${JSON.stringify(result.data, null, 2)}</pre>`;
+            } else {
+                resultDiv.innerHTML = `<pre class="error">Auth check failed: ${result.data?.error || result.error}</pre>`;
+            }
+        }
+
+        async function loadUsers() {
+            const result = await makeRequest(`${BASE_URL}/admin_backend.php?action=users`);
+            const resultDiv = document.getElementById('data-result');
+            
+            if (result.ok) {
+                resultDiv.innerHTML = `<pre class="success">Users loaded successfully!
+Found ${result.data.length} users:
+${JSON.stringify(result.data.slice(0, 3), null, 2)}${result.data.length > 3 ? '\n... and more' : ''}</pre>`;
+            } else {
+                resultDiv.innerHTML = `<pre class="error">Failed to load users: ${result.data?.error || result.error}</pre>`;
+            }
+        }
+
+        async function loadBooks() {
+            const result = await makeRequest(`${BASE_URL}/admin_backend.php?action=books`);
+            const resultDiv = document.getElementById('data-result');
+            
+            if (result.ok) {
+                resultDiv.innerHTML = `<pre class="success">Books loaded successfully!
+Found ${result.data.length} books:
+${JSON.stringify(result.data.slice(0, 3), null, 2)}${result.data.length > 3 ? '\n... and more' : ''}</pre>`;
+            } else {
+                resultDiv.innerHTML = `<pre class="error">Failed to load books: ${result.data?.error || result.error}</pre>`;
+            }
+        }
+
+        async function loadBorrowings() {
+            const result = await makeRequest(`${BASE_URL}/admin_backend.php?action=borrowings`);
+            const resultDiv = document.getElementById('data-result');
+            
+            if (result.ok) {
+                resultDiv.innerHTML = `<pre class="success">Borrowings loaded successfully!
+Found ${result.data.length} borrowings:
+${JSON.stringify(result.data.slice(0, 3), null, 2)}${result.data.length > 3 ? '\n... and more' : ''}</pre>`;
+            } else {
+                resultDiv.innerHTML = `<pre class="error">Failed to load borrowings: ${result.data?.error || result.error}</pre>`;
+            }
+        }
+
+        function openAdminPanel() {
+            window.open(`${BASE_URL}/admin.html`, '_blank');
+            const resultDiv = document.getElementById('panel-result');
+            resultDiv.innerHTML = `<div class="info">Admin panel opened in new tab. Check if it shows data correctly.</div>`;
+        }
+    </script>
+</body>
+</html>

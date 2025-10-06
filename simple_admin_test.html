@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Admin Test</title>
+</head>
+<body>
+    <h1>Simple Admin Test</h1>
+    <div id="stats">
+        <div>Users: <span id="userCount">Loading...</span></div>
+        <div>Books: <span id="bookCount">Loading...</span></div>
+        <div>Borrowings: <span id="borrowingCount">Loading...</span></div>
+    </div>
+    <div id="log"></div>
+    
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message) {
+            log.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            console.log(message);
+        }
+        
+        async function testAdminAPI() {
+            try {
+                addLog('Starting admin API test...');
+                
+                // First, try to login
+                addLog('Attempting login...');
+                const loginResponse = await fetch('./admin_backend.php?action=login', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@admin.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                const loginData = await loginResponse.json();
+                addLog('Login response: ' + JSON.stringify(loginData));
+                
+                if (loginData.message) {
+                    addLog('Login successful, now fetching data...');
+                    
+                    // Test users endpoint
+                    const usersResponse = await fetch('./admin_backend.php?action=users', {
+                        credentials: 'include'
+                    });
+                    
+                    if (usersResponse.ok) {
+                        const users = await usersResponse.json();
+                        document.getElementById('userCount').textContent = users.length;
+                        addLog('Users loaded: ' + users.length);
+                    } else {
+                        addLog('Users failed: ' + usersResponse.status);
+                    }
+                    
+                    // Test books endpoint
+                    const booksResponse = await fetch('./admin_backend.php?action=books', {
+                        credentials: 'include'
+                    });
+                    
+                    if (booksResponse.ok) {
+                        const books = await booksResponse.json();
+                        document.getElementById('bookCount').textContent = books.length;
+                        addLog('Books loaded: ' + books.length);
+                    } else {
+                        addLog('Books failed: ' + booksResponse.status);
+                    }
+                    
+                    // Test borrowings endpoint
+                    const borrowingsResponse = await fetch('./admin_backend.php?action=borrowings', {
+                        credentials: 'include'
+                    });
+                    
+                    if (borrowingsResponse.ok) {
+                        const borrowings = await borrowingsResponse.json();
+                        document.getElementById('borrowingCount').textContent = borrowings.length;
+                        addLog('Borrowings loaded: ' + borrowings.length);
+                    } else {
+                        addLog('Borrowings failed: ' + borrowingsResponse.status);
+                    }
+                    
+                } else {
+                    addLog('Login failed: ' + (loginData.error || 'Unknown error'));
+                }
+                
+            } catch (error) {
+                addLog('Error: ' + error.message);
+            }
+        }
+        
+        // Start the test
+        testAdminAPI();
+    </script>
+</body>
+</html>

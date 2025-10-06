@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Admin API</title>
+</head>
+<body>
+    <h1>Debug Admin API</h1>
+    <div id="output"></div>
+    
+    <script>
+    async function testAPI() {
+        const output = document.getElementById('output');
+        
+        try {
+            // Test login first
+            output.innerHTML += '<h3>Testing Login...</h3>';
+            const loginResponse = await fetch('./admin_backend.php?action=login', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: 'admin@admin.com',
+                    password: 'admin123'
+                })
+            });
+            
+            const loginData = await loginResponse.json();
+            output.innerHTML += '<pre>Login Response: ' + JSON.stringify(loginData, null, 2) + '</pre>';
+            
+            // Test whoami
+            output.innerHTML += '<h3>Testing Whoami...</h3>';
+            const whoamiResponse = await fetch('./admin_backend.php?action=whoami', {
+                credentials: 'include'
+            });
+            const whoamiData = await whoamiResponse.json();
+            output.innerHTML += '<pre>Whoami Response: ' + JSON.stringify(whoamiData, null, 2) + '</pre>';
+            
+            // Test users
+            output.innerHTML += '<h3>Testing Users...</h3>';
+            const usersResponse = await fetch('./admin_backend.php?action=users', {
+                credentials: 'include'
+            });
+            
+            if (usersResponse.ok) {
+                const usersData = await usersResponse.json();
+                output.innerHTML += '<pre>Users Response: ' + JSON.stringify(usersData, null, 2) + '</pre>';
+            } else {
+                output.innerHTML += '<pre>Users Error: ' + usersResponse.status + ' - ' + await usersResponse.text() + '</pre>';
+            }
+            
+        } catch (error) {
+            output.innerHTML += '<pre>Error: ' + error.message + '</pre>';
+        }
+    }
+    
+    // Auto-run test
+    testAPI();
+    </script>
+</body>
+</html>

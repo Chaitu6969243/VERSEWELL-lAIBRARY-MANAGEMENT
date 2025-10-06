@@ -1,0 +1,214 @@
+﻿document.addEventListener("DOMContentLoaded", function() {
+    if (!localStorage.getItem("vw_signed_in")) {
+        window.location.href = "./auth.html";
+        return;
+    }
+    
+    // Check server session status
+    checkServerSession().then(isAuthenticated => {
+        if (!isAuthenticated) {
+            alert("Your session has expired. Please log in again.");
+            localStorage.removeItem("vw_signed_in");
+            window.location.href = "./auth.html";
+            return;
+        }
+        loadTrendingBooks();
+    });
+    
+    // Setup modal close event listeners
+    const modalCloseBtn = document.querySelector(".modal-close");
+    if (modalCloseBtn) {
+        modalCloseBtn.addEventListener("click", closeModal);
+    }
+    
+    const cancelBtn = document.getElementById("cancelBorrow");
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", closeModal);
+    }
+});
+
+async function checkServerSession() {
+    try {
+        const response = await fetch("./book_api.php?action=debug-session", {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        console.log("Session debug:", data);
+        return data.user_id != null;
+    } catch (error) {
+        console.error("Session check failed:", error);
+        return false;
+    }
+}
+
+function loadTrendingBooks() {
+    fetch("./book_api.php?action=trending&limit=20")
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.books) {
+                displayBooks(data.books);
+            }
+        });
+}
+
+function displayBooks(books) {
+    const container = document.getElementById("booksGrid");
+    if (!container) return;
+    container.innerHTML = "";
+    books.forEach(book => {
+        const div = document.createElement("div");
+        div.className = "book-card";
+        
+        // Clean and truncate description if it's too long
+        let description = book.description || '';
+        if (description.length > 200) {
+            description = description.substring(0, 200) + '...';
+        }
+        
+        div.innerHTML = `
+            <div class="book-cover">
+                <img src="${book.cover_url || ''}" alt="${book.title || 'Book cover'}">
+            </div>
+            <div class="book-info">
+                <div class="book-content">
+                    <h3 class="book-title">${book.title || 'Unknown Title'}</h3>
+                    <p class="book-authors">${book.authors || 'Unknown Author'}</p>
+                    ${description ? `<p class="book-description">${description}</p>` : ''}
+                </div>
+                <div class="book-actions">
+                    <button class="btn btn-accent" onclick="openBorrowModal('${book.google_book_id}', '${(book.title || "").replace(/'/g, "\\'")}', '${(book.authors || "").replace(/'/g, "\\'")}', '${book.cover_url || ""}')">
+                        <i class="fas fa-book"></i> Borrow
+                    </button>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function openBorrowModal(bookId, title, authors, coverUrl) {
+    const modal = document.getElementById("borrowModal");
+    modal.style.display = "flex";
+    modal.removeAttribute("hidden");
+    document.getElementById("modalBookTitle").textContent = title;
+    document.getElementById("modalBookAuthor").textContent = authors;
+    if (coverUrl) document.getElementById("modalBookCover").src = coverUrl;
+    
+    // Update due date when duration changes
+    const durationSelect = document.getElementById("borrowDuration");
+    updateDueDate();
+    durationSelect.onchange = updateDueDate;
+    
+    document.getElementById("confirmBorrow").onclick = function() { borrowBook(bookId, title, authors); };
+}
+
+function updateDueDate() {
+    const duration = parseInt(document.getElementById("borrowDuration").value);
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + duration);
+    document.getElementById("dueDate").textContent = dueDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+function borrowBook(bookId, title, authors) {
+    const confirmBtn = document.getElementById("confirmBorrow");
+    const cancelBtn = document.getElementById("cancelBorrow");
+    
+    // Disable buttons during request
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Borrowing...";
+    }
+    if (cancelBtn) {
+        cancelBtn.disabled = true;
+    }
+    
+    const formData = new FormData();
+    formData.append("action", "borrow");
+    formData.append("google_book_id", bookId);
+    formData.append("duration", document.getElementById("borrowDuration").value);
+    
+    fetch("./book_api.php", { 
+        method: "POST", 
+        body: formData,
+        credentials: "include"
+    })
+    .then(response => {
+        console.log("Response status:", response.status);
+        if (!response.ok) {
+            throw new Error("HTTP " + response.status + ": " + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => { 
+        console.log("API Response:", data);
+        if (data.success) {
+            showSuccessMessage("Book borrowed successfully! Check your profile to view borrowed books.");
+            closeModal();
+            // Optionally refresh the page or update UI
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showErrorMessage(data.error || data.message || "Failed to borrow book. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error("Borrow error:", error);
+        showErrorMessage("Network error. Please check your connection and try again.");
+    })
+    .finally(() => {
+        // Re-enable buttons
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = "Borrow Book";
+        }
+        if (cancelBtn) {
+            cancelBtn.disabled = false;
+        }
+    });
+}
+
+function showSuccessMessage(message) {
+    const toast = createToast(message, 'success');
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+function showErrorMessage(message) {
+    const toast = createToast(message, 'error');
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
+}
+
+function createToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    return toast;
+}
+
+function closeModal() { 
+    const modal = document.getElementById("borrowModal");
+    modal.style.display = "none";
+    modal.setAttribute("hidden", "");
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(e) { 
+    if (e.target.id === "borrowModal") closeModal(); 
+}
+
+

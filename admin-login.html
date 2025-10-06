@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login • Versewell Digital Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./auth.css" />
+  <style>
+    /* Admin-specific styling */
+    .admin-login-card {
+      max-width: 400px;
+      background: var(--surface, rgba(255, 255, 255, 0.05));
+      border: 1px solid rgba(158, 255, 26, 0.3);
+      backdrop-filter: blur(20px);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .admin-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(158, 255, 26, 0.1);
+      color: var(--accent, #9eff1a);
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .admin-title {
+      color: var(--text, #e2e8f0);
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .admin-subtitle {
+      color: var(--muted, #94a3b8);
+      font-size: 0.875rem;
+      margin: 0.5rem 0 0;
+    }
+    
+    .admin-help {
+      background: rgba(158, 255, 26, 0.05);
+      border: 1px solid rgba(158, 255, 26, 0.2);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .admin-help h4 {
+      color: var(--accent, #9eff1a);
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+    }
+    
+    .credentials {
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 0.75rem;
+      color: var(--text, #e2e8f0);
+      line-height: 1.4;
+    }
+    
+    .back-to-main {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    
+    .back-to-main a {
+      color: var(--muted, #94a3b8);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.3s ease;
+    }
+    
+    .back-to-main a:hover {
+      color: var(--accent, #9eff1a);
+    }
+    
+    .security-notice {
+      background: rgba(255, 193, 7, 0.1);
+      color: #ffc107;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      font-size: 0.75rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-header">
+    <a href="./index.html" class="back-home">
+      <span>← Back to Home</span>
+    </a>
+  </div>
+  
+  <main class="auth" aria-label="Admin Authentication">
+    <div class="auth-card admin-login-card" role="dialog" aria-modal="true">
+      <div class="admin-header">
+        <div class="admin-badge">
+          🔐 Administrator Access
+        </div>
+        <h1 class="admin-title">Admin Portal</h1>
+        <p class="admin-subtitle">Secure access to library management</p>
+      </div>
+
+      <div class="admin-help">
+        <h4>� Admin Credentials</h4>
+        <p class="credentials">Email: admin@admin.com<br>
+Password: admin123</p>
+      </div>
+      
+      <form id="adminLoginForm" class="form" autocomplete="on" novalidate>
+        <label class="field">
+          <span class="label">Admin Email</span>
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="Enter admin email" 
+            required 
+            autocomplete="username"
+            value="admin@admin.com"
+          />
+          <small class="error" aria-live="polite"></small>
+        </label>
+        
+        <label class="field">
+          <span class="label">Admin Password</span>
+          <input 
+            type="password" 
+            name="password" 
+            placeholder="Enter admin password" 
+            required 
+            autocomplete="current-password"
+            value="admin123"
+          />
+          <small class="error" aria-live="polite"></small>
+        </label>
+        
+        <button class="btn primary" type="submit">
+          <span>🚀 Enter Admin Dashboard</span>
+        </button>
+      </form>
+
+     
+
+      <div class="back-to-main">
+        <a href="./auth.html">← Back to User Login</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="./api.js" defer></script>
+  <script>
+    // Admin login with specified credentials
+    document.addEventListener('DOMContentLoaded', function() {
+      const adminForm = document.getElementById('adminLoginForm');
+      
+      adminForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(adminForm);
+        const email = formData.get('email');
+        const password = formData.get('password');
+        
+        // Show loading state
+        const submitBtn = adminForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span>🔄 Authenticating...</span>';
+        submitBtn.disabled = true;
+        
+        try {
+          // Perform server-side admin login to set PHP session cookie
+          const response = await fetch('./admin_backend.php?action=login', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              email: email,
+              password: password
+            })
+          });
+
+          const result = await response.json();
+
+          // Expect a successful response with session flag
+          if (result && (result.message || result.admin)) {
+            // Store UI flags in localStorage for client-side checks
+            localStorage.setItem('vw_signed_in', '1');
+            localStorage.setItem('vw_is_admin', '1');
+            localStorage.setItem('vw_user_id', String(result.admin?.id || 1));
+            localStorage.setItem('vw_user_email', email);
+            localStorage.setItem('vw_user_name', result.admin?.name || 'Administrator');
+
+            submitBtn.innerHTML = '<span>✅ Access Granted! Redirecting...</span>';
+            setTimeout(() => window.location.href = './admin.html', 600);
+          } else {
+            throw new Error(result.error || 'Invalid admin credentials');
+          }
+
+        } catch (error) {
+          console.error('Admin login error:', error);
+          const emailField = adminForm.querySelector('input[name="email"]');
+          const errorEl = emailField.parentNode.querySelector('.error');
+          if (errorEl) errorEl.textContent = error.message || 'Login failed';
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }
+      });
+      
+      // Quick access button with proper credentials
+      const autoAccessBtn = document.createElement('button');
+      autoAccessBtn.type = 'button';
+      autoAccessBtn.className = 'btn secondary';
+      autoAccessBtn.style.marginTop = '0.5rem';
+      autoAccessBtn.innerHTML = '<span>⚡ Quick Access</span>';
+      autoAccessBtn.addEventListener('click', function() {
+        // Set admin session data
+        localStorage.setItem('vw_signed_in', '1');
+        localStorage.setItem('vw_is_admin', '1');
+        localStorage.setItem('vw_user_id', '1');
+        localStorage.setItem('vw_user_email', 'admin@admin.com');
+        localStorage.setItem('vw_user_name', 'Administrator');
+        localStorage.setItem('vw_admin_role', 'admin');
+        
+        // Direct redirect
+        window.location.href = './admin.html';
+      });
+      
+      // Add the quick access button after the form
+      adminForm.parentNode.insertBefore(autoAccessBtn, adminForm.nextSibling);
+    });
+  </script>
+</body>
+</html>

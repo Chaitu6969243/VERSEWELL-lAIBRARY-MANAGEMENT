@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile • Versewell</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./styles.css?v=1.0.1" />
+  <link rel="stylesheet" href="./profile.css?v=1.0.1" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="./index.html" class="brand" aria-label="Versewell Digital Library home">
+        <span class="logo" aria-hidden="true"><i class="fas fa-book"></i></span>
+        <span class="brand-text">Versewell</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="./index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="./book.html"><i class="fas fa-book-open"></i> Books</a>
+        <a href="./profile.html" id="profileNav"><i class="fas fa-user"></i> Profile</a>
+        <a href="./notifications.html" id="notificationsNav"><i class="fas fa-bell"></i> Notifications</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="./auth.html" id="authAction" class="btn btn-accent">Sign Out</a>
+        <button id="menuToggle" class="icon-btn" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobileMenu" class="mobile-menu" hidden>
+      <nav class="mobile-nav" aria-label="Mobile">
+        <a href="./index.html" data-close="menu"><i class="fas fa-home"></i> Home</a>
+        <a href="./book.html" data-close="menu"><i class="fas fa-book-open"></i> Books</a>
+        <a href="./profile.html" id="profileMobile" data-close="menu"><i class="fas fa-user"></i> Profile</a>
+        <a href="./notifications.html" id="notificationsMobile" data-close="menu"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="./auth.html" id="authMobile" class="btn btn-accent">Sign Out</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="profile-main">
+    <div class="container profile-grid">
+      <section class="profile-card reveal" aria-label="Profile Settings">
+        <div class="avatar-wrap">
+          <div class="avatar" id="avatarPreview" aria-label="Profile picture" role="img">
+            <span aria-hidden="true"><i class="fas fa-user"></i></span>
+          </div>
+          <label class="avatar-upload btn btn-ghost">
+            <input id="avatarInput" type="file" accept="image/*" hidden />
+            Change Photo
+          </label>
+          <small class="hint">PNG/JPG, up to 2MB.</small>
+          <small id="avatarError" class="error" aria-live="polite"></small>
+        </div>
+
+        <div class="profile-info">
+          <h3 id="profileName">Loading...</h3>
+          <p id="profileEmail">Loading...</p>
+          <div class="profile-stats">
+            <div class="stat">
+              <span class="stat-number" id="totalBorrowed">0</span>
+              <span class="stat-label">Books Borrowed</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number" id="currentlyBorrowed">0</span>
+              <span class="stat-label">Currently Reading</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="history-card reveal" aria-label="Borrowing History">
+        <div class="history-head">
+          <h2 class="section-title">Your Activity</h2>
+          <div class="filters">
+            <input id="search" type="search" placeholder="Search by title or author" />
+            <select id="sort">
+              <option value="latest" selected>Latest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="History tabs">
+          <button id="tab-borrowed" class="tab active" role="tab" aria-selected="true" aria-controls="panel-borrowed">Borrowed</button>
+          <button id="tab-returned" class="tab" role="tab" aria-selected="false" aria-controls="panel-returned">Returned</button>
+          <button id="tab-penalties" class="tab" role="tab" aria-selected="false" aria-controls="panel-penalties">Penalties</button>
+        </div>
+
+        <section id="panel-borrowed" class="panel active" role="tabpanel" aria-labelledby="tab-borrowed">
+          <div id="borrowedBooksList" class="borrowed-books-list"></div>
+        </section>
+
+        <section id="panel-returned" class="panel" role="tabpanel" aria-labelledby="tab-returned" hidden>
+          <div id="returnedBooksList" class="returned-books-list"></div>
+        </section>
+
+        <section id="panel-penalties" class="panel" role="tabpanel" aria-labelledby="tab-penalties" hidden>
+          <div class="penalty-head">
+            <div class="penalty-summary">
+              <div class="penalty-amount">
+                <span class="amount-label">Total Outstanding:</span>
+                <span class="amount-value" id="totalPenalty">₹0</span>
+              </div>
+            </div>
+          </div>
+          <div id="penaltyList" class="penalty-list"></div>
+          <div id="paymentSection" class="payment-section" style="display: none;">
+            <button class="btn btn-accent" id="payPenaltyBtn">Pay All Penalties</button>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="year"></span> Versewell Digital Library. All rights reserved.</p>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="./api.js?v=1.0.1" defer></script>
+  <script src="./script.js?v=1.0.1" defer></script>
+  <script src="./profile.js?v=1.0.1" defer></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Storage</title>
+</head>
+<body>
+    <h1>Clear Storage & Test</h1>
+    <button onclick="clearStorage()">Clear All Storage</button>
+    <button onclick="testAdmin()">Test Admin Panel</button>
+    <button onclick="goToLogin()">Go to Login</button>
+    
+    <div id="status"></div>
+    
+    <script>
+        function clearStorage() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.getElementById('status').innerHTML = '<p>✅ All storage cleared!</p>';
+        }
+        
+        function testAdmin() {
+            window.location.href = './admin.html';
+        }
+        
+        function goToLogin() {
+            window.location.href = './admin-login.html';
+        }
+        
+        // Show current storage state
+        document.getElementById('status').innerHTML = '<h3>Current Storage:</h3><pre>' + 
+            JSON.stringify({
+                localStorage: {...localStorage},
+                hasAdminSession: localStorage.getItem('vw_is_admin') === '1'
+            }, null, 2) + '</pre>';
+    </script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Admin • Versewell Digital Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./styles.css?v=1.0.1" />
+  <link rel="stylesheet" href="./admin.css?v=1.0.1" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="./index.html" class="brand" aria-label="Versewell Digital Library home">
+        <span class="logo" aria-hidden="true"><i class="fas fa-book"></i></span>
+        <span class="brand-text">Versewell</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="./index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="./book.html"><i class="fas fa-book-open"></i> Books</a>
+        <a href="./profile.html" id="profileNav"><i class="fas fa-user"></i> Profile</a>
+        <a href="./notifications.html" id="notificationsNav"><i class="fas fa-bell"></i> Notifications</a>
+      </nav>
+
+      <div class="header-actions">
+        <div id="adminNameContainer" class="admin-name" aria-hidden="true">
+          <span id="adminName">Administrator</span>
+        </div>
+        <a href="./auth.html" id="authAction" class="btn btn-accent">Logout</a>
+        <button id="menuToggle" class="icon-btn" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobileMenu" class="mobile-menu" hidden>
+      <nav class="mobile-nav" aria-label="Mobile">
+        <a href="./index.html" data-close="menu"><i class="fas fa-home"></i> Home</a>
+        <a href="./book.html" data-close="menu"><i class="fas fa-book-open"></i> Books</a>
+        <a href="./profile.html" id="profileMobile" data-close="menu"><i class="fas fa-user"></i> Profile</a>
+        <a href="./notifications.html" id="notificationsMobile" data-close="menu"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="./auth.html" id="authMobile" class="btn btn-accent">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="admin-main">
+    <div class="container">
+      <div class="admin-header">
+        <h1 class="admin-title">Library Administration</h1>
+        <div class="admin-nav">
+          <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+          <button class="nav-btn" data-tab="users">Users</button>
+          <button class="nav-btn" data-tab="books">Books</button>
+          <button class="nav-btn" data-tab="transactions">Transactions</button>
+        </div>
+      </div>
+
+      <div id="dashboard-tab" class="admin-tab active">
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-info">
+              <div class="stat-number" id="totalUsers">0</div>
+              <div class="stat-label">Total Users</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-book"></i></div>
+            <div class="stat-info">
+              <div class="stat-number" id="totalBooks">0</div>
+              <div class="stat-label">Books Available</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+            <div class="stat-info">
+              <div class="stat-number" id="borrowedBooks">0</div>
+              <div class="stat-label">Currently Borrowed</div>
+            </div>
+          </div>
+          <div class="stat-card overdue">
+            <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-info">
+              <div class="stat-number" id="overdueBooks">0</div>
+              <div class="stat-label">Overdue Books</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-content">
+          <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <div id="recentActivity" class="activity-list"></div>
+          </div>
+          <div class="overdue-alerts">
+            <h3>Overdue Alerts</h3>
+            <div id="overdueAlerts" class="alerts-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="users-tab" class="admin-tab">
+        <div class="tab-header">
+          <h2>User Management</h2>
+          <div class="tab-actions">
+            <input id="userSearch" type="search" placeholder="Search users..." />
+            <button class="btn btn-accent" id="addUserBtn">Add New User</button>
+          </div>
+        </div>
+        <div class="users-grid">
+          <aside class="users-sidebar">
+            <ul id="usersList" class="users-list"></ul>
+            <p id="usersEmpty" class="muted" hidden>No users found.</p>
+          </aside>
+          <div class="user-details">
+            <div id="userInfo" class="user-info" style="display: none;">
+              <div class="user-profile">
+                <h3 id="selectedUserName">User Name</h3>
+                <p id="selectedUserEmail">email@example.com</p>
+                <p id="selectedUserJoined">Joined: --</p>
+                <div class="user-actions">
+                  <button class="btn btn-ghost" id="editUserBtn">Edit User</button>
+                  <button class="btn btn-ghost" id="sendReminderBtn">Send Reminder</button>
+                  <button class="btn btn-danger" id="suspendUserBtn">Suspend User</button>
+                </div>
+              </div>
+              <div class="user-books">
+                <h4>Borrowed Books</h4>
+                <div id="userBorrowedBooks" class="borrowed-books-list"></div>
+              </div>
+            </div>
+            <div id="noUserSelected" class="placeholder">
+              <p>Select a user to view details</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="books-tab" class="admin-tab">
+        <div class="tab-header">
+          <h2>Book Management</h2>
+          <div class="tab-actions">
+            <input id="bookSearch" type="search" placeholder="Search books..." />
+            <button class="btn btn-accent" id="addBookBtn">Add New Book</button>
+          </div>
+        </div>
+        <div class="books-table">
+          <table id="booksTable">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Available</th>
+                <th>Total</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="booksTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="transactions-tab" class="admin-tab">
+        <div class="tab-header">
+          <h2>Transaction History</h2>
+          <div class="tab-actions">
+            <select id="transactionFilter">
+              <option value="all">All Transactions</option>
+              <option value="borrowed">Currently Borrowed</option>
+              <option value="returned">Returned</option>
+              <option value="overdue">Overdue</option>
+            </select>
+            <input id="transactionSearch" type="search" placeholder="Search transactions..." />
+          </div>
+        </div>
+        <div class="transactions-table">
+          <table id="transactionsTable">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Book</th>
+                <th>Borrowed Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th class="actions-column">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="editUserModal" class="modal" hidden>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Edit User</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="editUserForm">
+            <div class="field">
+              <label>Name</label>
+              <input type="text" id="editUserName" required />
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" id="editUserEmail" required />
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select id="editUserStatus">
+                <option value="active">Active</option>
+                <option value="suspended">Suspended</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="cancelEditUser">Cancel</button>
+          <button class="btn btn-accent" id="saveEditUser">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="addBookModal" class="modal" hidden>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Add New Book</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="addBookForm">
+            <div class="field">
+              <label>Title</label>
+              <input type="text" id="addBookTitle" required />
+            </div>
+            <div class="field">
+              <label>Author</label>
+              <input type="text" id="addBookAuthor" required />
+            </div>
+            <div class="field">
+              <label>ISBN</label>
+              <input type="text" id="addBookISBN" />
+            </div>
+            <div class="field">
+              <label>Total Copies</label>
+              <input type="number" id="addBookCopies" min="1" value="1" required />
+            </div>
+            <div class="field">
+              <label>Description</label>
+              <textarea id="addBookDescription" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="cancelAddBook">Cancel</button>
+          <button class="btn btn-accent" id="saveAddBook">Add Book</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="addUserModal" class="modal" hidden>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Add New User</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="addUserForm">
+            <div class="field">
+              <label>Name</label>
+              <input type="text" id="addUserName" required />
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" id="addUserEmail" required />
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" id="addUserPassword" required />
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select id="addUserStatus">
+                <option value="active">Active</option>
+                <option value="suspended">Suspended</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="cancelAddUser">Cancel</button>
+          <button class="btn btn-accent" id="saveAddUser">Add User</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editBookModal" class="modal" hidden>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Edit Book</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="editBookForm">
+            <div class="field">
+              <label>Title</label>
+              <input type="text" id="editBookTitle" required />
+            </div>
+            <div class="field">
+              <label>Author</label>
+              <input type="text" id="editBookAuthor" required />
+            </div>
+            <div class="field">
+              <label>ISBN</label>
+              <input type="text" id="editBookISBN" />
+            </div>
+            <div class="field">
+              <label>Total Copies</label>
+              <input type="number" id="editBookCopies" min="1" required />
+            </div>
+            <div class="field">
+              <label>Description</label>
+              <textarea id="editBookDescription" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="cancelEditBook">Cancel</button>
+          <button class="btn btn-accent" id="saveEditBook">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editBorrowingModal" class="modal" hidden>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Edit Borrowing Details</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="editBorrowingForm">
+            <div class="field">
+              <label>User</label>
+              <input type="text" id="editBorrowingUser" readonly />
+            </div>
+            <div class="field">
+              <label>Book</label>
+              <input type="text" id="editBorrowingBook" readonly />
+            </div>
+            <div class="field">
+              <label>Borrowed Date</label>
+              <input type="date" id="editBorrowingDate" required />
+            </div>
+            <div class="field">
+              <label>Due Date</label>
+              <input type="date" id="editBorrowingDueDate" required />
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select id="editBorrowingStatus">
+                <option value="borrowed">Borrowed</option>
+                <option value="returned">Returned</option>
+                <option value="overdue">Overdue</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Return Date (if returned)</label>
+              <input type="date" id="editBorrowingReturnDate" />
+            </div>
+            <div class="field">
+              <label>Notes</label>
+              <textarea id="editBorrowingNotes" rows="3" placeholder="Add any notes about this borrowing..."></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="cancelEditBorrowing">Cancel</button>
+          <button class="btn btn-accent" id="saveEditBorrowing">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  
+
+  <script src="./cache-buster.js?v=1.0.1"></script>
+  <script src="./api.js?v=1.0.1" defer></script>
+  <script src="./script.js?v=1.0.1" defer></script>
+  <script src="./admin.js?v=1.0.1" defer></script>
+</body>
+</html>

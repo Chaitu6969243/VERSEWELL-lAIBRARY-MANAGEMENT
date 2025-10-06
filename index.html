@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Versewell Digital Library - Your Gateway to Knowledge</title>
+  <link rel="preconnect" href="htts://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./styles.css?v=1.0.1" />
+  <style>
+    /* Enhanced styles for the redesigned homepage */
+    .hero-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: clamp(2rem, 5vw, 4rem) 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-content {
+      text-align: center;
+      max-width: min(800px, 95%);
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      padding: 0 1rem;
+    }
+    
+    .hero-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #22c55e, #10b981, #06d6a0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: #94a3b8;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .hero-actions {
+      display: flex;
+      gap: clamp(0.5rem, 2vw, 1rem);
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(180px, calc(50% - 0.5rem)), 1fr));
+      gap: clamp(0.75rem, 2vw, 1.5rem);
+      margin-top: 4rem;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: clamp(1rem, 3vw, 2rem);
+      text-align: center;
+      transition: transform 0.3s ease, background 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 120px;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .stat-number {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    
+    .stat-label {
+      color: #94a3b8;
+      font-weight: 500;
+      font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+      line-height: 1.3;
+      text-align: center;
+      word-wrap: break-word;
+      hyphens: auto;
+      max-width: 100%;
+    }
+    
+    .features-section {
+      padding: 5rem 0;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid rgba(158,255,26,.12);
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,.3);
+    }
+    
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+      color: var(--accent);
+    }
+    
+    .feature-icon i {
+      font-size: inherit;
+    }
+    
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+    
+    .feature-description {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    
+    .quick-access-section {
+      background: var(--bg-elev);
+      padding: 4rem 0;
+    }
+    
+    .quick-access-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+      gap: clamp(1rem, 2.5vw, 1.5rem);
+      overflow: hidden;
+    }
+    
+    .quick-access-card {
+      background: var(--surface);
+      border: 1px solid rgba(158,255,26,.12);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: var(--text);
+    }
+    
+    .quick-access-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      text-decoration: none;
+      color: var(--text);
+    }
+    
+    .quick-access-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+      color: var(--accent);
+    }
+    
+    .quick-access-icon i {
+      font-size: inherit;
+    }
+    
+    /* Icon spacing in navigation and buttons */
+    .desktop-nav a i,
+    .mobile-nav a i,
+    .btn i {
+      margin-right: 0.5rem;
+    }
+    
+    .logo i {
+      color: var(--accent);
+      font-size: 1.5rem;
+    }
+    
+    .testimonials-section {
+      padding: 5rem 0;
+    }
+    
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+    
+    .testimonial-card {
+      background: var(--surface);
+      border: 1px solid rgba(158,255,26,.12);
+      border-radius: 1rem;
+      padding: 2rem;
+      position: relative;
+    }
+    
+    .testimonial-quote {
+      font-style: italic;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+    
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #000;
+    }
+    
+    .author-info h4 {
+      margin: 0;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .author-info p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-top: 2rem;
+      }
+      
+      .stat-card {
+        padding: 1rem;
+        min-height: 100px;
+      }
+      
+      .stat-number {
+        font-size: 1.5rem;
+      }
+      
+      .stat-label {
+        font-size: 0.75rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+      }
+      
+      .stat-card {
+        padding: 0.75rem;
+        min-height: 90px;
+      }
+      
+      .stat-number {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+      }
+      
+      .stat-label {
+        font-size: 0.7rem;
+        line-height: 1.2;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="./index.html" class="brand" aria-label="Versewell Digital Library home">
+        <span class="logo" aria-hidden="true"><i class="fas fa-book"></i></span>
+        <span class="brand-text">Versewell</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="./index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="./book.html"><i class="fas fa-book-open"></i> Books</a>
+        <a href="./profile.html" id="profileNav"><i class="fas fa-user"></i> Profile</a>
+        <a href="./notifications.html" id="notificationsNav"><i class="fas fa-bell"></i> Notifications</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="./auth.html" id="authAction" class="btn btn-accent">Sign In</a>
+        <button id="menuToggle" class="icon-btn" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobileMenu" class="mobile-menu" hidden>
+      <nav class="mobile-nav" aria-label="Mobile">
+        <a href="./index.html" data-close="menu"><i class="fas fa-home"></i> Home</a>
+        <a href="./book.html" data-close="menu"><i class="fas fa-book-open"></i> Books</a>
+        <a href="./profile.html" id="profileMobile" data-close="menu"><i class="fas fa-user"></i> Profile</a>
+        <a href="./notifications.html" id="notificationsMobile" data-close="menu"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="./auth.html" id="authMobile" class="btn btn-accent">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" role="main">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">Welcome to Versewell Digital Library</h1>
+          <p class="hero-subtitle">
+            Discover, borrow, and explore thousands of books from our vast digital collection. 
+            Your gateway to knowledge is just a click away.
+          </p>
+          
+          <div class="hero-actions">
+            <a href="./book.html" class="btn btn-accent btn-lg"><i class="fas fa-search"></i> Browse Books</a>
+            <a href="./auth.html" id="heroAuth" class="btn btn-ghost btn-lg"><i class="fas fa-user-plus"></i> Get Started</a>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-number" id="totalBooks">10,000+</span>
+              <span class="stat-label">Books Available</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="activeReaders">2,500+</span>
+              <span class="stat-label">Active Readers</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="booksRead">50,000+</span>
+              <span class="stat-label">Books Read</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">24/7</span>
+              <span class="stat-label">Available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Why Choose Versewell?</h2>
+          <p class="section-desc">Discover the features that make our digital library special</p>
+        </div>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon"><i class="fas fa-rocket"></i></span>
+            <h3 class="feature-title">Instant Access</h3>
+            <p class="feature-description">
+              Get immediate access to our entire collection. No waiting, no queues - just instant digital borrowing.
+            </p>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon"><i class="fas fa-globe"></i></span>
+            <h3 class="feature-title">Global Collection</h3>
+            <p class="feature-description">
+              Access books from publishers worldwide. From classics to latest releases, fiction to technical guides.
+            </p>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon"><i class="fas fa-lightbulb"></i></span>
+            <h3 class="feature-title">Smart Recommendations</h3>
+            <p class="feature-description">
+              Discover your next favorite book with our AI-powered recommendation system based on your reading history.
+            </p>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon"><i class="fas fa-mobile-alt"></i></span>
+            <h3 class="feature-title">Multi-Device Support</h3>
+            <p class="feature-description">
+              Read anywhere, anytime. Our platform works seamlessly across desktop, tablet, and mobile devices.
+            </p>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon"><i class="fas fa-bell"></i></span>
+            <h3 class="feature-title">Smart Notifications</h3>
+            <p class="feature-description">
+              Never miss a due date with our intelligent notification system. Get reminders and updates automatically.
+            </p>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon"><i class="fas fa-users"></i></span>
+            <h3 class="feature-title">Reading Community</h3>
+            <p class="feature-description">
+              Join a community of book lovers. Share reviews, discover recommendations, and connect with fellow readers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Access Section -->
+    <section class="quick-access-section" id="quick-access">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Quick Access</h2>
+          <p class="section-desc">Jump to the most popular sections</p>
+        </div>
+        
+        <div class="quick-access-grid">
+          <a href="./book.html?category=fiction" class="quick-access-card">
+            <span class="quick-access-icon"><i class="fas fa-book"></i></span>
+            <h3>Fiction</h3>
+            <p>Explore novels and stories</p>
+          </a>
+          
+          <a href="./book.html?category=non-fiction" class="quick-access-card">
+            <span class="quick-access-icon"><i class="fas fa-graduation-cap"></i></span>
+            <h3>Non-Fiction</h3>
+            <p>Educational and factual books</p>
+          </a>
+          
+          <a href="./book.html?category=technology" class="quick-access-card">
+            <span class="quick-access-icon"><i class="fas fa-laptop-code"></i></span>
+            <h3>Technology</h3>
+            <p>Programming and tech guides</p>
+          </a>
+          
+          <a href="./book.html?category=science" class="quick-access-card">
+            <span class="quick-access-icon"><i class="fas fa-microscope"></i></span>
+            <h3>Science</h3>
+            <p>Scientific research and studies</p>
+          </a>
+          
+          <a href="./book.html?category=business" class="quick-access-card">
+            <span class="quick-access-icon"><i class="fas fa-briefcase"></i></span>
+            <h3>Business</h3>
+            <p>Management and entrepreneurship</p>
+          </a>
+          
+          <a href="./book.html?category=arts" class="quick-access-card">
+            <span class="quick-access-icon"><i class="fas fa-palette"></i></span>
+            <h3>Arts & Design</h3>
+            <p>Creative and artistic works</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">What Our Readers Say</h2>
+          <p class="section-desc">Join thousands of satisfied readers</p>
+        </div>
+        
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "Versewell has completely transformed my reading habits. The instant access to thousands of books 
+              and the smart recommendations have helped me discover amazing titles I never would have found otherwise."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">SM</div>
+              <div class="author-info">
+                <h4>Sarah Mitchell</h4>
+                <p>Software Developer</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "As a student, Versewell has been invaluable. The extensive collection of academic books and research 
+              materials has made my studies so much easier. Plus, the notification system ensures I never miss a due date!"
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">DJ</div>
+              <div class="author-info">
+                <h4>David Johnson</h4>
+                <p>University Student</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "The user interface is incredibly intuitive, and I love being able to access my books from any device. 
+              Whether I'm on my phone during lunch or on my tablet at home, my library is always with me."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">ER</div>
+              <div class="author-info">
+                <h4>Emily Rodriguez</h4>
+                <p>Marketing Manager</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-content">
+          <h2 class="hero-title" style="font-size: 2.5rem;">Ready to Start Reading?</h2>
+          <p class="hero-subtitle">
+            Join Versewell today and unlock access to our entire digital library.
+          </p>
+          
+          <div class="hero-actions">
+            <a href="./auth.html" class="btn btn-accent btn-lg"><i class="fas fa-user-plus"></i> Join Now - It's Free</a>
+            <a href="./book.html" class="btn btn-ghost btn-lg"><i class="fas fa-search"></i> Explore Books</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+  <script src="./script.js?v=1.0.1"></script>
+  <script>
+    // Enhanced navigation visibility control
+    function updateNavigation() {
+      const signed = localStorage.getItem('vw_signed_in');
+      const isAdmin = localStorage.getItem('vw_is_admin') === '1';
+      
+      // Navigation elements
+      const profileNav = document.getElementById('profileNav');
+      const notificationsNav = document.getElementById('notificationsNav');
+      const authAction = document.getElementById('authAction');
+      const heroAuth = document.getElementById('heroAuth');
+      
+      // Mobile navigation elements
+      const profileMobile = document.getElementById('profileMobile');
+      const notificationsMobile = document.getElementById('notificationsMobile');
+      const authMobile = document.getElementById('authMobile');
+      
+      if (signed === '1') {
+        // User is logged in
+        if (profileNav) profileNav.style.display = 'block';
+        if (notificationsNav) notificationsNav.style.display = 'block';
+        if (profileMobile) profileMobile.style.display = 'block';
+        if (notificationsMobile) notificationsMobile.style.display = 'block';
+        
+        if (authAction) {
+          authAction.textContent = 'Sign Out';
+          authAction.href = '#';
+          authAction.onclick = logout;
+        }
+        if (authMobile) {
+          authMobile.textContent = 'Sign Out';
+          authMobile.href = '#';
+          authMobile.onclick = logout;
+        }
+        if (heroAuth) {
+          heroAuth.innerHTML = '<i class="fas fa-book-open"></i> My Books';
+          heroAuth.href = './profile.html';
+        }
+        
+
+      } else {
+        // User is not logged in
+        if (profileNav) profileNav.style.display = 'none';
+        if (notificationsNav) notificationsNav.style.display = 'none';
+        if (profileMobile) profileMobile.style.display = 'none';
+        if (notificationsMobile) notificationsMobile.style.display = 'none';
+      }
+    }
+    
+    function logout() {
+      try {
+        localStorage.removeItem('vw_signed_in');
+        localStorage.removeItem('vw_is_admin');
+        localStorage.removeItem('vw_user_id');
+        localStorage.removeItem('vw_user_email');
+        localStorage.removeItem('vw_user_name');
+        localStorage.removeItem('vw_admin_role');
+      } catch {}
+      
+      updateNavigation();
+      alert('You have been signed out successfully!');
+    }
+    
+    // Initialize navigation on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNavigation();
+      
+      // Set current year
+      const yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+      
+      // Add smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

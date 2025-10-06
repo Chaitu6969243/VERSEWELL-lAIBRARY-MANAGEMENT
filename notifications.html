@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;808&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css?v=1.0.1" />
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications • Versewell Library</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .main-content {
+            padding: 2rem 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        .notifications-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #22c55e, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+
+
+        .notification {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .notification:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .notification.reminder {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .notification.overdue {
+            border-left: 4px solid #ef4444;
+        }
+
+        .notification.due_soon {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .notification.renewal_approved {
+            border-left: 4px solid #22c55e;
+        }
+
+        .notification-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .notification-type.reminder {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .notification-type.overdue {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .notification-type.due_soon {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .notification-type.renewal_approved {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .notification-message {
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .notification-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .notification-date {
+            font-weight: 500;
+        }
+
+        .notification-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .notification-status.sent {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .notification-status.pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .notification-status.failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .loading, .error, .empty {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            color: #fca5a5;
+        }
+
+        .empty {
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .notification-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to content</a>
+
+    <header class="site-header" role="banner">
+        <div class="container header-inner">
+            <a href="./index.html" class="brand" aria-label="Versewell Digital Library home">
+                <span class="logo" aria-hidden="true"><i class="fas fa-book"></i></span>
+                <span class="brand-text">Versewell</span>
+            </a>
+
+            <nav class="desktop-nav" aria-label="Primary">
+                <a href="./index.html"><i class="fas fa-home"></i> Home</a>
+                <a href="./book.html"><i class="fas fa-book-open"></i> Books</a>
+                <a href="./profile.html" id="profileNav"><i class="fas fa-user"></i> Profile</a>
+                <a href="./notifications.html" id="notificationsNav" class="nav-active"><i class="fas fa-bell"></i> Notifications</a>
+            </nav>
+
+            <div class="header-actions">
+                <a href="./auth.html" id="authAction" class="btn btn-accent">Sign Out</a>
+                <button id="menuToggle" class="icon-btn" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="mobile-menu" hidden>
+            <nav class="mobile-nav" aria-label="Mobile">
+                <a href="./index.html" data-close="menu"><i class="fas fa-home"></i> Home</a>
+                <a href="./book.html" data-close="menu"><i class="fas fa-book-open"></i> Books</a>
+                <a href="./profile.html" id="profileMobile" data-close="menu"><i class="fas fa-user"></i> Profile</a>
+                <a href="./notifications.html" id="notificationsMobile" data-close="menu" class="nav-active"><i class="fas fa-bell"></i> Notifications</a>
+                <a href="./auth.html" id="authMobile" class="btn btn-accent">Sign Out</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content" id="main" role="main">
+        <div class="container">
+            <div class="notifications-container">
+                <div class="page-header">
+                    <h1 class="page-title">📬 My Notifications</h1>
+                    <p class="page-subtitle">Your recent notifications and alerts</p>
+                </div>
+
+                <div id="notifications-container">
+                    <div class="loading">Loading notifications...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simple notifications loader
+        class NotificationsPage {
+            constructor() {
+                this.userId = null;
+                this.init();
+            }
+
+            init() {
+                // Check if user is logged in
+                const signed = localStorage.getItem('vw_signed_in');
+                const userId = localStorage.getItem('vw_user_id');
+                
+                if (!signed || signed !== '1' || !userId) {
+                    alert('Please login to view notifications');
+                    window.location.href = './auth.html';
+                    return;
+                }
+                
+                this.userId = userId;
+                this.loadNotifications();
+            }
+
+            async loadNotifications() {
+                try {
+                    const response = await fetch(`./api.php/notifications?user_id=${this.userId}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const notifications = await response.json();
+                    this.displayNotifications(notifications);
+                    
+                } catch (error) {
+                    console.error('Load error:', error);
+                    this.showError();
+                }
+            }
+
+            displayNotifications(notifications) {
+                const container = document.getElementById('notifications-container');
+                
+                if (!notifications || notifications.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 No notifications yet</div>';
+                    return;
+                }
+
+                const html = notifications.map(notification => {
+                    const date = new Date(notification.sent_at);
+                    const typeIcon = this.getTypeIcon(notification.notification_type);
+                    
+                    return `
+                        <div class="notification ${notification.notification_type}">
+                            <div class="notification-type ${notification.notification_type}">
+                                ${typeIcon} ${notification.notification_type.replace('_', ' ')}
+                            </div>
+                            <div class="notification-message">
+                                ${notification.message}
+                            </div>
+                            <div class="notification-meta">
+                                <span class="notification-date">
+                                    ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}
+                                </span>
+                                <span class="notification-status ${notification.status}">
+                                    ${notification.status.toUpperCase()}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                container.innerHTML = html;
+            }
+
+            getTypeIcon(type) {
+                const icons = {
+                    'reminder': '<i class="fas fa-bell"></i>',
+                    'overdue': '<i class="fas fa-exclamation-triangle"></i>',
+                    'due_soon': '<i class="fas fa-clock"></i>',
+                    'renewal_approved': '<i class="fas fa-check-circle"></i>'
+                };
+                return icons[type] || '<i class="fas fa-info-circle"></i>';
+            }
+
+            showError() {
+                const container = document.getElementById('notifications-container');
+                container.innerHTML = '<div class="error">Unable to load notifications. Please try again later.</div>';
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new NotificationsPage();
+        });
+    </script>
+
+    <script src="./script.js"></script>
+</body>
+</html>
